@@ -1,1 +1,1 @@
-{"rewrites":[{"source":"/merchant/transactions/:id","destination":"/merchant.html"},{"source":"/merchant","destination":"/merchant.html"},{"source":"/payment/return","destination":"/index.html"}]}
+{"rewrites":[{"source":"/islandship","destination":"/islandship.html"},{"source":"/islanddrive","destination":"/islanddrive.html"},{"source":"/merchant/transactions/:id","destination":"/merchant.html"},{"source":"/merchant","destination":"/merchant.html"},{"source":"/payment/return","destination":"/index.html"}]}
