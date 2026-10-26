@@ -1,5 +1,6 @@
 const {requireMerchantAdmin}=require('../_lib/admin-auth');
-const {resolvePayMeshConfig,environment}=require('../_lib/paymesh-config');
+const {environment}=require('../_lib/paymesh-config');
+const {effectiveConfig}=require('../_lib/config-store');
 // Read-only production transaction lookup. Existing sandbox endpoint remains authoritative.
 // The upstream auth header follows the existing PayMesh Bearer-key integration.
 module.exports=async function(req,res){
@@ -9,7 +10,7 @@ module.exports=async function(req,res){
   await requireMerchantAdmin(req);
   const mode=environment(req.query.environment);
   if(mode!=='production')return res.status(400).json({error:'Use the existing sandbox transaction endpoint'});
-  const {baseUrl,apiKey}=resolvePayMeshConfig(mode);
+  const {baseUrl,apiKey}=await effectiveConfig(mode);
   const query=new URLSearchParams();
   for(const name of ['merchant_reference','status','cursor']){
     const value=String(req.query[name]||'').trim();
