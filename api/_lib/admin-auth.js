@@ -1,7 +1,7 @@
 // Require a valid Supabase user who is present in shop_admins.
 // Uses the same authorization model as the existing merchant dashboard.
 async function requireMerchantAdmin(req) {
-  const token=String(req.headers.authorization||'').replace(/^Bearer\\s+/i,'');
+  const token=String(req.headers.authorization||'').replace(/^Bearer\s+/i,'');
   if(!token)throw Object.assign(new Error('Sign in required'),{statusCode:401});
   const url=process.env.SUPABASE_URL, key=process.env.SUPABASE_PUBLISHABLE_KEY;
   if(!url||!key)throw Object.assign(new Error('Authentication unavailable'),{statusCode:503});
