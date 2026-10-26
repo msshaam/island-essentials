@@ -13,7 +13,7 @@ module.exports=async(req,res)=>{res.setHeader('Cache-Control','private,no-store'
   if(name.length<2||name.length>120||!/^\S+@\S+\.\S+$/.test(email))throw fail(400,'Enter your name and email');
   if(req.body?.consent!==true)throw fail(400,'Accept the payment terms before continuing');
   const origin='https://island-essentials.vercel.app',ref=(service==='islandship'?'SHIP':'DRIVE')+'_'+u.id.replace(/-/g,'')+'_'+crypto.randomBytes(5).toString('hex');
-  const body={amount:price[service],currency:'MVR',merchant_reference:ref,customer:{reference:'IE_'+u.id.replace(/-/g,''),name,email},return_url:origin+'/'+(service==='islandship'?'islandship':'islanddrive')};
+  const body={amount:price[service],currency:'MVR',merchant_reference:ref,customer:{reference:'IE_'+u.id.replace(/-/g,''),name,email},return_url:origin+'/payment/return'};
   if(service==='islandship'){body.description='IslandShip monthly forwarding membership';body.agreement={amount_variability:'FIXED',amount:price[service],frequency:'MONTHLY',description:'IslandShip monthly membership MVR 199'};}
   else {const amount=String(req.body?.rechargeAmount||'300');if(!['200','300','500'].includes(amount))throw fail(400,'Invalid recharge amount');body.description='IslandDrive initial service credit and auto-recharge consent';body.save_card='REQUESTED';body.mit_permission={purpose:'IslandDrive service credit automatic top-ups',max_amount_per_charge:amount+'.00'};}
   const result=await paymesh('/payments','POST',body);return res.status(200).json({checkout_url:result.checkout_url,payment_id:result.payment_id,service});
