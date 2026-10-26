@@ -2,7 +2,7 @@ const crypto=require('node:crypto');
 const {environment,resolvePayMeshConfig,publicConfiguration}=require('./paymesh-config');
 const TABLE='paymesh_environment_settings';
 const base=()=>process.env.SUPABASE_URL+'/rest/v1/'+TABLE;
-const headers=(token)=>({apikey:process.env.SUPABASE_PUBLISHABLE_KEY,Authorization:'Bearer '+(token||process.env.SUPABASE_PUBLISHABLE_KEY)});
+const headers=(token)=>token?{apikey:process.env.SUPABASE_PUBLISHABLE_KEY,Authorization:'Bearer '+token}:{apikey:process.env.SUPABASE_PUBLISHABLE_KEY};
 function cipherKey(){const raw=process.env.PAYMESH_CONFIG_ENCRYPTION_KEY;if(!raw||!/^[0-9a-f]{64}$/i.test(raw))throw Object.assign(new Error('Configuration encryption unavailable'),{statusCode:503});return Buffer.from(raw,'hex')}
 function encrypt(value){const iv=crypto.randomBytes(12),c=crypto.createCipheriv('aes-256-gcm',cipherKey(),iv);const body=Buffer.concat([c.update(value,'utf8'),c.final()]);return Buffer.concat([iv,c.getAuthTag(),body]).toString('base64')}
 function decrypt(value){const raw=Buffer.from(value,'base64');if(raw.length<29)throw Error('Invalid ciphertext');const d=crypto.createDecipheriv('aes-256-gcm',cipherKey(),raw.subarray(0,12));d.setAuthTag(raw.subarray(12,28));return Buffer.concat([d.update(raw.subarray(28)),d.final()]).toString('utf8')}
